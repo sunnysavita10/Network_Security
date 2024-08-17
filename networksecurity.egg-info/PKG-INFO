@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: networksecurity
+Version: 0.0.1
+Author: sunny savita
+Author-email: snshrivas3365@gmail.com
+License-File: LICENCE
+Requires-Dist: python-dotenv
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: pymongo
+Requires-Dist: certifi
