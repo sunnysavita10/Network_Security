@@ -1,4 +1,5 @@
 .env
 venv
-logs
+.logs
 networksecurity.egg-info
+Artifacts
