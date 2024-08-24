@@ -1,0 +1,93 @@
+Abnormal_URL:
+  drift_status: false
+  p_value: 1.0
+DNSRecord:
+  drift_status: false
+  p_value: 0.8151359073090507
+Domain_registeration_length:
+  drift_status: false
+  p_value: 0.9659080032037665
+Favicon:
+  drift_status: false
+  p_value: 0.9563660841655501
+Google_Index:
+  drift_status: false
+  p_value: 0.9999996521355587
+HTTPS_token:
+  drift_status: false
+  p_value: 0.9998299425911609
+Iframe:
+  drift_status: false
+  p_value: 0.9999989383967115
+Links_in_tags:
+  drift_status: false
+  p_value: 1.0
+Links_pointing_to_page:
+  drift_status: false
+  p_value: 0.8923284435665428
+Page_Rank:
+  drift_status: false
+  p_value: 1.0
+Prefix_Suffix:
+  drift_status: false
+  p_value: 1.0
+Redirect:
+  drift_status: false
+  p_value: 0.9999953843756324
+Request_URL:
+  drift_status: false
+  p_value: 0.4527621454370569
+Result:
+  drift_status: false
+  p_value: 0.9903208205295254
+RightClick:
+  drift_status: false
+  p_value: 1.0
+SFH:
+  drift_status: false
+  p_value: 0.9999836499887566
+SSLfinal_State:
+  drift_status: false
+  p_value: 0.44566877193471394
+Shortining_Service:
+  drift_status: false
+  p_value: 0.9999062353866229
+Statistical_report:
+  drift_status: false
+  p_value: 0.9985597993583677
+Submitting_to_email:
+  drift_status: false
+  p_value: 0.9739932435377546
+URL_Length:
+  drift_status: false
+  p_value: 0.9925611176019148
+URL_of_Anchor:
+  drift_status: false
+  p_value: 0.9687622789382879
+age_of_domain:
+  drift_status: false
+  p_value: 0.6369650807361981
+double_slash_redirecting:
+  drift_status: false
+  p_value: 0.9999836499887566
+having_At_Symbol:
+  drift_status: false
+  p_value: 0.9925611176019148
+having_IP_Address:
+  drift_status: false
+  p_value: 1.0
+having_Sub_Domain:
+  drift_status: false
+  p_value: 0.9990438890770315
+on_mouseover:
+  drift_status: false
+  p_value: 0.9999971010402764
+popUpWidnow:
+  drift_status: false
+  p_value: 0.999931781258988
+port:
+  drift_status: false
+  p_value: 0.9528546927737338
+web_traffic:
+  drift_status: false
+  p_value: 1.0
