@@ -7,5 +7,6 @@ pymongo[srv]
 scikit-learn
 dill
 pyyaml
+xgboost
 
 -e .
