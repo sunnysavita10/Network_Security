@@ -23,7 +23,9 @@ class DataTransformationArtifact:
 
 @dataclass
 class ModelTrainerArtifact:
-    pass
+    trained_model_file_path: str
+    train_metric_artifact: ClassificationMetricArtifact
+    test_metric_artifact: ClassificationMetricArtifact
 
 @dataclass
 class ModelEvaluationArtifact:
