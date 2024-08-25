@@ -8,5 +8,6 @@ scikit-learn
 dill
 pyyaml
 xgboost
+fastapi
 
 -e .
