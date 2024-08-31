@@ -3,3 +3,4 @@ logs
 networksecurity.egg-info
 Artifacts
 __pycache__
+/.env

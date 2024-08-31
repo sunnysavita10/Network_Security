@@ -1,40 +1,47 @@
-"""from asyncio import tasks
+from asyncio import tasks
 import json
 from textwrap import dedent
 import pendulum
 import os
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from dotenv import load_dotenv
+load_dotenv()
+
 
 with DAG(
-    'batch_prediction',
+    'network_prediction',
     default_args={'retries': 2},
     # [END default_args]
-    description='gemstone batch prediction',
-    schedule_interval="@weekly", # here you can test based on hour or mints but make sure here you container is up and running
-    start_date=pendulum.datetime(2023,4, 11, tz="UTC"),
+    description='Network Security Prediction',
+    schedule_interval="@weekly",
+    start_date=pendulum.datetime(2024, 8, 9, tz="UTC"),
     catchup=False,
     tags=['example'],
 ) as dag:
+
+    
     def download_files(**kwargs):
-        bucket_name = os.getenv("BUCKET_NAME")# download the file from the repo
+        bucket_name = "my-network-datasource"
         input_dir = "/app/input_files"
         #creating directory
         os.makedirs(input_dir,exist_ok=True)
-        #os.system(f"aws s3 sync s3://{bucket_name}/inbox {config.inbox_dir}")
+        os.system(f"aws s3 sync s3://{bucket_name}/input_files /app/input_files")
 
     def batch_prediction(**kwargs):
-        config = BatchPredictionConfig()
-        sensor_batch_prediction = SensorBatchPrediction(batch_config=config)
-        sensor_batch_prediction.start_prediction()
-       
-    def upload_files(**kwargs):
-        #bucket_name = os.getenv("BUCKET_NAME")
-        #os.system(f"aws s3 sync {config.archive_dir} s3://{bucket_name}/archive")
-        #os.system(f"aws s3 sync {config.outbox_dir} s3://{bucket_name}/outbox")
+        from networksecurity.pipeline.batch_prediction import start_batch_prediction
+        input_dir = "/app/input_files"
+        for file_name in os.listdir(input_dir):
+            #make prediction
+            start_batch_prediction(input_file_path=os.path.join(input_dir,file_name))
+    
+    def sync_prediction_dir_to_s3_bucket(**kwargs):
+        bucket_name = os.getenv("PREDICTION_BUCKET_NAME")
+        #upload prediction folder to predictionfiles folder in s3 bucket
+        os.system(f"aws s3 sync /app/prediction s3://{bucket_name}/prediction_files")
+    
 
-
-   # download_input_files  = PythonOperator(
+    download_input_files  = PythonOperator(
             task_id="download_file",
             python_callable=download_files
 
@@ -48,10 +55,8 @@ with DAG(
 
     upload_prediction_files = PythonOperator(
             task_id="upload_prediction_files",
-            python_callable=upload_files
+            python_callable=sync_prediction_dir_to_s3_bucket
 
     )
 
     download_input_files >> generate_prediction_files >> upload_prediction_files
-    
-    """
