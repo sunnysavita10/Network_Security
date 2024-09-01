@@ -80,39 +80,14 @@ async def predict_route(request: Request,file: UploadFile = File(...)):
         model = ModelResolver(model_dir=SAVED_MODEL_DIR)
         latest_model_path = model.get_best_model_path()
         latest_model = load_object(file_path=latest_model_path)
+        
         y_pred = latest_model.predict(df)
         df['predicted_column'] = y_pred
         df['predicted_column'].replace(-1, 0)
         #return df.to_json()
         table_html = df.to_html(classes='table table-striped')
         #print(table_html)
-        #return templates.TemplateResponse("table.html", {"request": request, "table": table_html})
-        return HTMLResponse(content=f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Predicted Data</title>
-            <style>
-                table {{
-                    border-collapse: collapse;
-                    width: 100%;
-                }}
-                th, td {{
-                    border: 1px solid black;
-                    padding: 8px;
-                    text-align: left;
-                }}
-                th {{
-                    background-color: #f2f2f2;
-                }}
-            </style>
-        </head>
-        <body>
-            <h2>Predicted Data</h2>
-            {table_html}
-        </body>
-        </html>
-        """)
+        return templates.TemplateResponse("table.html", {"request": request, "table": table_html})
         
     except Exception as e:
             raise NetworkSecurityException(e,sys)

@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 with DAG(
-    'network_security',
+    'network_training',
     default_args={'retries': 2},
     # [END default_args]
     description='network security pipeline',
@@ -29,7 +29,7 @@ with DAG(
     
     def sync_artifact_to_s3_bucket(**kwargs):
         bucket_name = "mynetworksecurity"
-        os.system(f"aws s3 sync /app/artifact s3://{bucket_name}/artifacts")
+        os.system(f"aws s3 sync /app/Artifacts s3://{bucket_name}/artifact")
         os.system(f"aws s3 sync /app/saved_models s3://{bucket_name}/saved_models")
 
     training_pipeline  = PythonOperator(

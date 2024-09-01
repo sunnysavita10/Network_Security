@@ -10,6 +10,8 @@ from networksecurity.utils.main_utils.utils import save_object,load_object,write
 from networksecurity.utils.ml_utils.model.estimator import ModelResolver
 from networksecurity.constant.training_pipeline import TARGET_COLUMN
 import pandas  as  pd
+import mlflow
+import mlflow.sklearn
 class ModelEvaluation:
     def __init__(self,model_eval_config:ModelEvaluationConfig,
                     data_validation_artifact:DataValidationArtifact,
@@ -80,7 +82,7 @@ class ModelEvaluation:
             else:
                 is_model_accepted=False
 
-            print(is_model_accepted, improved_accuracy, latest_model_path, train_model_file_path, trained_metric, latest_metric)
+            #print(is_model_accepted, improved_accuracy, latest_model_path, train_model_file_path, trained_metric, latest_metric)
             model_evaluation_artifact = ModelEvaluationArtifact(
                     is_model_accepted=is_model_accepted, 
                     improved_accuracy=improved_accuracy, 
@@ -91,7 +93,7 @@ class ModelEvaluation:
 
             model_eval_report = model_evaluation_artifact.__dict__
             
-            print(model_eval_report)
+            #print(model_eval_report)
 
             #save the report
             #dir_path=os.path.dirname(self.model_eval_config.model_evaluation_dir)
@@ -100,6 +102,18 @@ class ModelEvaluation:
 
             write_yaml_file(self.model_eval_config.report_file_path, model_eval_report)
             logging.info(f"Model evaluation artifact: {model_evaluation_artifact}")
+            
+            with mlflow.start_run():
+                f1_score=trained_metric.f1_score
+                precision_score=trained_metric.precision_score
+                recall_score=trained_metric.recall_score
+                
+                mlflow.log_metric("f1_score",f1_score)
+                mlflow.log_metric("precision_score",precision_score)
+                mlflow.log_metric("recall_score",recall_score)
+                
+                mlflow.sklearn.log_model(train_model,"model")
+                
             return model_evaluation_artifact
         except Exception as e:
                 raise NetworkSecurityException(e,sys)
