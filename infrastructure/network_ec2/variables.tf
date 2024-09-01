@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "app_ami" {
   type    = string
-  default = "ami-066784287e358dad1"
+  default = "ami-0e86e20dae9224db8"
 }
 
 variable "app_instance_type" {
