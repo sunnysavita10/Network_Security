@@ -1,11 +1,11 @@
 variable "aws_region" {
   type    = string
-  default = "ap-south-1"
+  default = "us-east-1"
 }
 
 variable "model_bucket_name" {
   type    = string
-  default = "sensor-model"
+  default = "network-model"
 }
 
 variable "aws_account_id" {
