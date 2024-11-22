@@ -1,82 +1,158 @@
-# Deployment Guide
+# Network Security Dataset Repository
 
-## 1. Login to AWS Console
+This repository contains all necessary components to predict outcomes using the **Network Security Dataset**. The main focus is on deploying the model with **XGBClassifier** for predictive analysis and implementing a CI/CD pipeline.
 
-Start by logging into the AWS Management Console.
+---
 
-## 2. Create IAM User for Deployment
+## Dataset Details
 
-Create an IAM user with specific access permissions:
+### Columns Description:
+1. **having_IP_Address**: Indicates if the URL contains an IP address.
+2. **URL_Length**: Length of the URL.
+3. **Shortining_Service**: Use of shortening services like bit.ly.
+4. **having_At_Symbol**: Presence of "@" symbol in the URL.
+5. **double_slash_redirecting**: Presence of "//" in unusual positions.
+6. **Prefix_Suffix**: Hyphen usage in domain names.
+7. **having_Sub_Domain**: Number of sub-domains in the URL.
+8. **SSLfinal_State**: SSL certificate validation state.
+9. **Domain_registeration_length**: Length of domain registration.
+10. **Favicon**: Checks for legitimate favicon usage.
+11. **port**: Analyzes unusual ports in URLs.
+12. **HTTPS_token**: Validates the token's presence in HTTPS.
+13. **Request_URL**: Validates request URLs.
+14. **URL_of_Anchor**: Validates anchor URLs.
+15. **Links_in_tags**: Count and validation of links in tags.
+16. **SFH**: Server form handler validation.
+17. **Submitting_to_email**: Submitting sensitive data to emails.
+18. **Abnormal_URL**: Detects abnormal patterns in URLs.
+19. **Redirect**: Detects unusual redirection.
+20. **on_mouseover**: Behavior triggered on mouseover.
+21. **RightClick**: Right-click functionality check.
+22. **popUpWindow**: Detects the presence of popups.
+23. **Iframe**: Usage of iframes.
+24. **age_of_domain**: Domain age analysis.
+25. **DNSRecord**: DNS record status.
+26. **web_traffic**: Web traffic analysis.
+27. **Page_Rank**: Page ranking score.
+28. **Google_Index**: Google indexing validation.
+29. **Links_pointing_to_page**: Validates links pointing to pages.
+30. **Statistical_report**: Statistical behavior analysis.
+31. **Result**: Target column indicating the prediction result.
 
-- **EC2 Access**: Allows access to virtual machines.
-- **S3 Bucket**: Allows storing artifacts and models.
-- **ECR (Elastic Container Registry)**: Allows saving Docker images in AWS.
+---
 
-### IAM Policy Attachments
+## Workflow Overview
 
-Attach the following policies to the IAM user:
+### 1. **Training Pipelines**:
+- **Data Injection**: Load and prepare data.
+- **Data Validation**: Validate data integrity and schema.
+- **Data Transformation**: Preprocess data for training.
+- **Model Training**: Train the **XGBClassifier** model.
+- **Model Evaluation**: Evaluate the trained model.
 
-1. `AmazonEC2ContainerRegistryFullAccess`
-2. `AmazonEC2FullAccess`
-3. `AmazonS3FullAccess`
+---
 
-## 3. Create an S3 Bucket
+### 2. **Continuous Integration (CI)**:
+- **Local Development to GitHub**: Push changes to the GitHub repository.
+- **GitHub Actions**: Run lint checks and unit tests automatically.
 
-- **Region**: `ap-south-1`
-- **Bucket Name**: `scania-sensor-pipeline`
+---
 
-## 4. ECR Repository
+### 3. **Continuous Delivery (CD)**:
+- **GitHub Actions to AWS ECR**: Build Docker images and push them to **AWS Elastic Container Registry (ECR)**.
 
-Create an ECR repository to store/save Docker images:
+---
 
-- **ECR Repository URI**: `566373416292.dkr.ecr.ap-south-1.amazonaws.com/sensor-fault`
+### 4. **Continuous Deployment (CD)**:
+- **AWS ECR to AWS EC2**: 
+  - Deploy Docker containers to **AWS EC2** instances via **Apache Airflow** for weekly automated runs.
 
-## 5. EC2 Machine Setup
+---
 
-Create an EC2 machine with Ubuntu.
+## Tools Used:
+- **GitHub**: Version control and repository management.
+- **GitHub Actions**: Automate CI/CD pipelines.
+- **AWS ECR**: Container registry for Docker images.
+- **AWS EC2**: Hosting environment for deployment.
+- **MLflow**: Model tracking and logging.
+- **Terraform**: Infrastructure as Code (IaC).
 
-## 6. Install Docker on EC2 Machine
+---
 
-Open your EC2 instance and install Docker:
+## CI/CD Configuration Details
 
-### Optional
+### 1. **GitHub Workflow (main.yaml)**:
+#### CI:
+- Checkout the repository.
+- Lint code and run unit tests.
 
+#### CD:
+- Build Docker images and push them to ECR.
+- Pull Docker images and deploy to EC2 instances.
+
+### 2. **Terraform Workflow (terraform.yaml)**:
+#### Infrastructure Deployment:
+- Configure AWS credentials.
+- Initialize and apply Terraform modules to manage cloud infrastructure.
+
+---
+
+## Deployment Guide
+
+### AWS Setup:
+1. **Login to AWS Console** and configure necessary services:
+   - **IAM User** with policies:
+     - `AmazonEC2ContainerRegistryFullAccess`
+     - `AmazonEC2FullAccess`
+     - `AmazonS3FullAccess`
+
+2. **Create AWS Resources**:
+   - **S3 Bucket**: Store artifacts/models.
+   - **ECR Repository**: Host Docker images.
+   - **EC2 Instance**: Host and run Docker containers.
+
+3. **Install Docker on EC2**:
+   ```bash
+   sudo apt-get update -y
+   sudo apt-get upgrade -y
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sudo sh get-docker.sh
+   sudo usermod -aG docker ubuntu
+   newgrp docker
+# Deployment Guide for Network Security Project
+
+This guide provides the steps to deploy the **Network Security Project** using Docker, AWS ECR, and EC2. Follow the instructions below for a seamless deployment process.
+
+---
+
+## Deployment Steps:
+
+### 1. Build Docker Image
+Build the Docker image from the project source code:
 ```bash
-sudo apt-get update -y
-sudo apt-get upgrade
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker ubuntu
-newgrp docker
-```
+docker build -t <image-name> .
+docker tag <image-name>:latest <ecr-uri>/<repository>:latest
 
-Configure EC2 as Self-Hosted Runner
+### 2. Push Image to ECR
+Push the Docker image to Amazon Elastic Container Registry (ECR):
+```bash
+docker push <ecr-uri>/<repository>:latest
+### 3. Pull Image on EC2
+Pull the Docker image from ECR to the EC2 instance:
+docker pull <ecr-uri>/<repository>:latest
 
-Configure EC2 as a self-hosted runner for GitHub Actions:
+### 4. Run the Docker Image
+Run the Docker container on EC2:
+```bash
+docker run -d -p 80:8080 --name=networksecurity \
+    -e 'MONGO_DB_URL=<mongodb-url>' \
+    <ecr-uri>/<repository>:latest
 
-Go to Settings > Actions > Runners.
-Click on New self-hosted runner.
-Choose the operating system.
-Follow the provided commands to complete the setup.
+### Secrets Configuration
+Ensure the following secrets are configured securely for deployment:
 
-Setup GitHub Secrets
-
-Add the following secrets to your GitHub repository:
-
-Setup GitHub Secrets
-
-AWS_ACCESS_KEY_ID: Your AWS access key.
-AWS_SECRET_ACCESS_KEY: Your AWS secret access key.
-AWS_REGION: ap-south-1
-AWS_ECR_LOGIN_URI: 566373416292.dkr.ecr.ap-south-1.amazonaws.com
-ECR_REPOSITORY_NAME: sensor-fault
-MONGO_DB_URL: mongodb+srv://avnish:Aa327030@cluster0.or68e.mongodb.net/admin?authSource=admin&replicaSet=atlas-desfdx-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true
-
-Deployment Description
-Follow these steps for deployment:
-
-Build Docker Image: Build a Docker image of your source code.
-Push Docker Image to ECR: Push the Docker image to the ECR repository.
-Launch EC2 Instance: Start your EC2 instance.
-Pull Docker Image on EC2: Pull the Docker image from ECR to your EC2 instance.
-Launch Docker Image on EC2: Run your Docker image on the EC2 instance.
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION
+ECR_REPOSITORY_NAME
+MONGO_DB_URL
